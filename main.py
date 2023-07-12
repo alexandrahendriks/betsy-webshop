@@ -5,6 +5,14 @@ __winc_id__ = "d7b474e9b3a54d23bca54879a4f1855b"
 __human_name__ = "Betsy Webshop"
 
 # Add your code after this line
+def main():
+    search("sweater")
+    list_user_products(2)
+    list_products_per_tag(2)
+    add_product_to_catalog(1, "jumpsuit", "Long jumpsuit for the cooler summer days", 159.89, 5, "dress")
+    remove_product(5)
+    update_stock(1, 60)
+    purchase_product(1, 2, 10)
 
 #Search for products based on a term. Searching for 'sweater' should yield all products that have the word 'sweater' in the name. This search should be case-insensitive
 def search(term):
@@ -41,9 +49,20 @@ def list_products_per_tag(tag_id):
         print("There is no product with the given tag id!")
 
 # Add a product to a user.
-def add_product_to_catalog(user_id, product, description, price_per_unit, amount_in_stock, product_tag_id):
-    query = Products.create(product_name = product, description = description, price_per_unit = price_per_unit, amount_in_stock = amount_in_stock, product_tag = product_tag_id, owner = user_id)
-    query.save()
+def add_product_to_catalog(user_id, product, description, price_per_unit, amount_in_stock, product_tag):
+    tag_list = []
+    for t in Tag.select():
+        tag_list.append(t.tag)
+    if product_tag not in tag_list:
+        query = Tag.create(tag = product_tag)
+        query.save()
+        for t in Tag.select():
+            if t.tag == product_tag:
+                p_query = Products.create(product_name = product, description = description, price_per_unit = price_per_unit, amount_in_stock = amount_in_stock, product_tag = t.id, owner = user_id)
+                p_query.save()
+    else:
+        query = Products.create(product_name = product, description = description, price_per_unit = price_per_unit, amount_in_stock = amount_in_stock, product_tag = t.id, owner = user_id)
+        query.save()   
     print(f"We have added {product} to the catalog!")
 
 # Remove a product from a user
@@ -82,3 +101,6 @@ def purchase_product(product_id, buyer_id, quantity):
                 print(f"{i.buyer.username} bought {quantity} {i.product.product_name}")
                 break
             update_stock(product_id, new_quantity)
+
+if __name__ == '__main__':
+    main()

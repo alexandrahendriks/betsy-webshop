@@ -20,7 +20,7 @@ class User(BaseModel):
     bank_account_number = CharField()
 
 class Tag(BaseModel):
-    tag = CharField(unique=True)
+    tag = CharField(unique = True)
 
 class Products(BaseModel):
     product_name = CharField()
